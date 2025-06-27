@@ -1,8 +1,7 @@
-// ✅ Updated: components/ui/TeamColumn.jsx
 import { useDrop } from 'react-dnd';
 import DraggablePlayer from './DraggablePlayer';
 
-export default function TeamColumn({ name, players, onDrop, isHost }) {
+export default function UnassignedColumn({ players, onDrop, isHost }) {
   const [{ isOver, canDrop }, dropRef] = useDrop({
     accept: 'PLAYER',
     canDrop: () => isHost,
@@ -16,14 +15,16 @@ export default function TeamColumn({ name, players, onDrop, isHost }) {
   return (
     <div
       ref={dropRef}
-      className={`w-48 min-h-[200px] p-4 rounded-lg border-2 ${
+      className={`w-full min-h-[80px] p-3 mb-6 rounded border-2 ${
         isOver && canDrop ? 'border-green-500 bg-green-50' : 'border-gray-300'
       }`}
     >
-      <h3 className="font-semibold mb-2 text-center">{name}</h3>
-      {players.map((player) => (
-        <DraggablePlayer key={player.id} player={player} isHost={isHost} />
-      ))}
+      <h3 className="font-semibold mb-2 text-center">Unassigned Players</h3>
+      <div className="flex flex-wrap justify-center gap-2">
+        {players.map((player) => (
+          <DraggablePlayer key={player.id} player={player} isHost={isHost} />
+        ))}
+      </div>
     </div>
   );
 }

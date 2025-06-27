@@ -74,6 +74,7 @@ module.exports = function registerGameplayHandlers(io, socket) {
 
     updateRoom(roomId, room => {
       room.gameState.currentWords = generateWords(room.gameState.settings.wordsPerRound);
+      room.gameState.turnEnded = false;
       room.gameState.guesses = [];
       room.gameState.timeLeft = timePerTurn;
     });
@@ -105,16 +106,18 @@ module.exports = function registerGameplayHandlers(io, socket) {
 };
 
 function endTurn(io, roomId) {
-  updateRoom(roomId, room => {
-    const turnIndex = room.gameState.currentTurnIndex;
-    const nextIndex = (turnIndex + 1) % room.gameState.turnOrder.length;
-    const currentPlayer = room.gameState.turnOrder[turnIndex];
+  const room = getRoom(roomId);
 
-    const team = room.gameState.teams.A.some(p => p.id === currentPlayer.id) ? 'A' : 'B';
+  if (room.gameState.turnEnded) return;
+  updateRoom(roomId, room => {
+    room.gameState.turnEnded = true;
+
+    const turnIndex = room.gameState.currentTurnIndex;
+    const currentPlayer = room.gameState.turnOrder[turnIndex];
+    const team = currentPlayer.team;
     const correctGuesses = room.gameState.guesses.filter(g => g.correct).length;
 
     room.gameState.scores[team] += correctGuesses;
-
     room.gameState.lastRound = {
       words: room.gameState.currentWords,
       guesses: room.gameState.guesses,
@@ -129,21 +132,25 @@ function endTurn(io, roomId) {
       room.gameState.currentPhase = 'end';
       room.gameState.winner = winner;
     } else {
-      room.gameState.currentTurnIndex = nextIndex;
+      room.gameState.currentTurnIndex = (turnIndex + 1) % room.gameState.turnOrder.length;
       room.gameState.currentPhase = 'score';
     }
   });
 
-  const room = getRoom(roomId);
+  const updatedRoom = getRoom(roomId);
 
-  io.to(roomId).emit('score-update', { scores: room.gameState.scores });
-  io.to(roomId).emit('last-round', room.gameState.lastRound);
+  io.to(roomId).emit('score-update', {
+    scores: updatedRoom.gameState.scores,
+    teams: updatedRoom.gameState.teams,
+  });
+  io.to(roomId).emit('last-round', updatedRoom.gameState.lastRound);
 
-  if (room.gameState.currentPhase === 'end') {
-    io.to(roomId).emit('game-ended', { winner: room.gameState.winner });
+  if (updatedRoom.gameState.currentPhase === 'end') {
+    io.to(roomId).emit('game-ended', { winner: updatedRoom.gameState.winner });
+    io.to(roomId).emit('navigate-to-score');
   } else {
     io.to(roomId).emit('next-turn', {
-      player: room.gameState.turnOrder[room.gameState.currentTurnIndex],
+      player: updatedRoom.gameState.turnOrder[updatedRoom.gameState.currentTurnIndex],
     });
     io.to(roomId).emit('navigate-to-score');
   }

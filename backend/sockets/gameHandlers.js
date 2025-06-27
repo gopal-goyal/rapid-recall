@@ -31,7 +31,11 @@ module.exports = function registerGameHandlers(io, socket) {
     const currentPlayer = turnOrder[0];
 
     io.to(roomId).emit('next-turn', { player: currentPlayer });
-    io.to(roomId).emit('score-update', { scores: { A: 0, B: 0 } });
+    io.to(roomId).emit('score-update', {
+      scores: room.gameState.scores,
+      teams: room.gameState.teams,
+    });
+
     io.to(roomId).emit('last-round', { words: [], guesses: [] });
     io.to(roomId).emit('game-started');
   });
@@ -40,10 +44,22 @@ module.exports = function registerGameHandlers(io, socket) {
     const room = getRoom(roomId);
     if (!room) return;
 
-    io.to(socket.id).emit('score-update', { scores: room.gameState.scores });
-    io.to(socket.id).emit('last-round', room.gameState.lastRound);
-    const currentPlayer = room.gameState.turnOrder[room.gameState.currentTurnIndex];
-    io.to(socket.id).emit('next-turn', { player: currentPlayer });
+    console.log('📊 Score screen loaded — teams:', room.gameState.teams);
+
+    const { scores, teams, lastRound, currentTurnIndex, turnOrder, gameState } = room.gameState;
+    const currentPlayer = turnOrder[currentTurnIndex];
+
+    socket.emit('score-update', {
+      scores,
+      teams,
+    });
+
+    socket.emit('last-round', lastRound);
+    socket.emit('next-turn', { player: currentPlayer });
+
+    if (room.gameState.currentPhase === 'end' && room.gameState.winner) {
+      socket.emit('game-ended', { winner: room.gameState.winner });
+    }
   });
 
   socket.on('start-turn', ({ roomId }) => {
@@ -63,4 +79,32 @@ module.exports = function registerGameHandlers(io, socket) {
 
     io.to(roomId).emit('navigate-to-game');
   });
+
+  socket.on('play-again', ({ roomId }) => {
+    const room = getRoom(roomId);
+    if (!room) return;
+
+    updateRoom(roomId, room => {
+      const prevTeams = room.gameState.teams;
+      const prevSettings = room.gameState.settings;
+
+      room.gameState = {
+        scores: { A: 0, B: 0 },
+        teams: prevTeams,
+        settings: prevSettings,
+        turnOrder: [],
+        currentTurnIndex: 0,
+        currentPhase: 'lobby',
+        lastRound: { words: [], guesses: [], correct: 0 },
+      };
+    });
+
+    // 🚨 Send BOTH these back — needed by Lobby.jsx
+    io.to(roomId).emit('reset-to-lobby'); // Triggers navigate
+    io.to(roomId).emit('room-update', room.players); // Shows unassigned
+    io.to(roomId).emit('host-id', room.hostId); // Needed for isHost
+    io.to(roomId).emit('teams-updated', { teams: room.gameState.teams }); // Shows team A/B
+    io.to(roomId).emit('settings-updated', { settings: room.gameState.settings }); // Updates sliders
+  });
+
 };

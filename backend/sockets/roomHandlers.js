@@ -14,15 +14,25 @@ module.exports = function registerRoomHandlers(io, socket) {
       console.log(`📦 Created new room: ${roomId}`);
     }
 
-    // Remove existing user (in case of refresh)
+    // Remove existing user (in case of refresh or replay)
     room.players = room.players.filter(p => p.id !== socket.id);
     room.players.push({ id: socket.id, name });
 
     socket.join(roomId);
 
+    // ✅ Send host info and updated player list
     io.to(roomId).emit('host-id', room.hostId);
     io.to(roomId).emit('room-update', room.players);
+
+    // ✅ Send room-state to just this socket (important!)
+    io.to(socket.id).emit('room-state', {
+      players: room.players,
+      hostId: room.hostId,
+      settings: room.gameState.settings,
+      teams: room.gameState.teams,
+    });
   });
+
 
   socket.on('disconnect', () => {
     const allRooms = getAllRooms();

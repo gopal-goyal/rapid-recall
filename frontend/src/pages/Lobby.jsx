@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSocket } from '../context/SocketContext';
-import { DndProvider } from 'react-dnd';
+import { useDrop, DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import TeamColumn from '@/components/ui/TeamColumn';
 import DraggablePlayer from '@/components/ui/DraggablePlayer';
 import GameSettings from '@/components/ui/GameSettings';
 import { Button } from '@/components/ui/Button';
-
+import UnassignedColumn from '@/components/ui/UnassignedColumn';
 
 export default function Lobby() {
   const { roomId } = useParams();
@@ -54,8 +54,16 @@ export default function Lobby() {
       setTeamB(teams.B);
     });
 
+    socket.on('room-state', ({ players, hostId, settings, teams }) => {
+      setPlayers(players);
+      setHostId(hostId);
+      setIsHost(socket.id === hostId);
+      setGameSettings(settings);
+      setTeamA(teams.A);
+      setTeamB(teams.B);
+    });
+
     socket.on('game-started', () => {
-      console.log('Received game-started event');
       navigate(`/score/${roomId}`);
     });
 
@@ -65,6 +73,7 @@ export default function Lobby() {
       socket.off('room-update', handleRoomUpdate);
       socket.off('host-id');
       socket.off('teams-updated');
+      socket.off('room-state');
       socket.off('settings-updated', handleSettingsUpdate);
       socket.off('game-started');
     };
@@ -76,18 +85,58 @@ export default function Lobby() {
 
   const canStart = isHost && teamA.length >= 2 && teamB.length >= 2;
 
+  // 👇 Local drop zone for unassigned players
+  function UnassignedColumn({ players, onDrop, isHost }) {
+    const [{ isOver, canDrop }, dropRef] = useDrop({
+      accept: 'PLAYER',
+      canDrop: () => isHost,
+      drop: (item) => onDrop(item),
+      collect: (monitor) => ({
+        isOver: monitor.isOver(),
+        canDrop: monitor.canDrop(),
+      }),
+    });
+
+    return (
+      <div
+        ref={dropRef}
+        className={`w-full min-h-[80px] p-3 mb-6 rounded border-2 ${
+          isOver && canDrop ? 'border-green-500 bg-green-50' : 'border-gray-300'
+        }`}
+      >
+        <h3 className="font-semibold mb-2 text-center">Unassigned Players</h3>
+        <div className="flex flex-wrap justify-center gap-2">
+          {players.map((player) => (
+            <DraggablePlayer key={player.id} player={player} isHost={isHost} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="min-h-screen flex flex-col items-center justify-center bg-blue-50 p-6">
         <div className="bg-white p-6 rounded-xl shadow w-full max-w-4xl">
           <h2 className="text-xl font-bold mb-4 text-center">Lobby: {roomId}</h2>
 
-          {/* Unassigned Players */}
-          <div className="flex flex-wrap justify-center gap-2 mb-6">
-            {unassigned.map(player => (
-              <DraggablePlayer key={player.id} player={player} isHost={isHost} />
-            ))}
-          </div>
+          {/* ✅ Drop zone for unassigned players */}
+          <UnassignedColumn
+            players={unassigned}
+            onDrop={(player) => {
+              const newTeamA = teamA.filter(p => p.id !== player.id);
+              const newTeamB = teamB.filter(p => p.id !== player.id);
+              setTeamA(newTeamA);
+              setTeamB(newTeamB);
+              if (isHost) {
+                socket.emit('teams-updated', {
+                  roomId,
+                  teams: { A: newTeamA, B: newTeamB },
+                });
+              }
+            }}
+            isHost={isHost}
+          />
 
           {/* Team Columns */}
           <div className="flex justify-center gap-4 mb-6">

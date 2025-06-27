@@ -11,6 +11,7 @@ export default function Scoreboard() {
   const navigate = useNavigate();
 
   const [scores, setScores] = useState({ A: 0, B: 0 });
+  const [teams, setTeams] = useState({ A: [], B: [] });
   const [lastRound, setLastRound] = useState({ words: [], guesses: [] });
   const [currentTurnPlayer, setCurrentTurnPlayer] = useState(null);
   const [socketId, setSocketId] = useState(null);
@@ -22,7 +23,15 @@ export default function Scoreboard() {
     setSocketId(socket.id);
     socket.emit('score-screen-loaded', { roomId });
 
-    socket.on('score-update', ({ scores }) => setScores(scores));
+    socket.on('score-update', ({ scores, teams }) => {
+      setScores(scores);
+      if (teams) setTeams(teams);
+    });
+
+    socket.on('reset-to-lobby', () => {
+      setTimeout(() => navigate(`/lobby/${roomId}`), 100);
+    });
+
     socket.on('last-round', ({ words, guesses }) => setLastRound({ words, guesses }));
     socket.on('next-turn', ({ player }) => setCurrentTurnPlayer(player));
     socket.on('navigate-to-game', () => navigate(`/game/${roomId}`));
@@ -34,6 +43,7 @@ export default function Scoreboard() {
       socket.off('next-turn');
       socket.off('navigate-to-game');
       socket.off('game-ended');
+      socket.off('reset-to-lobby');
     };
   }, [socket, roomId]);
 
@@ -55,22 +65,54 @@ export default function Scoreboard() {
 
       {/* Scores */}
       <div className="flex justify-between mb-4 text-center font-semibold">
-        <div>Team A: {scores.A}</div>
-        <div>Team B: {scores.B}</div>
+        <div>
+          Team A: {scores.A}
+          <ul className="text-sm font-normal mt-1 text-gray-600">
+            {teams.A.map((p) => (
+              <li key={p.id}>{p.name}</li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          Team B: {scores.B}
+          <ul className="text-sm font-normal mt-1 text-gray-600">
+            {teams.B.map((p) => (
+              <li key={p.id}>{p.name}</li>
+            ))}
+          </ul>
+        </div>
       </div>
+
+      {winner && (
+        <div className="text-center mt-6">
+          <Button
+            variant="success"
+            onClick={() => {
+              socket.emit('play-again', { roomId });
+            }}
+          >
+            Play Again
+          </Button>
+        </div>
+      )}
 
       {/* Last Round Summary */}
       <div className="mb-4">
         <h4 className="text-sm font-medium mb-1">Last Round Words:</h4>
-        <ul className="text-sm list-disc ml-4">
-          {lastRound.words?.length === 0
-            ? <li className="text-gray-500">None</li>
-            : lastRound.words.map((w, idx) => (
-                <li key={idx}>{typeof w === 'string' ? w : w.word}</li>
-              ))}
-        </ul>
+        <div className="text-sm flex flex-wrap gap-x-1 gap-y-1">
+          {lastRound.words?.length === 0 ? (
+            <span className="text-gray-500">None</span>
+          ) : (
+            lastRound.words.map((w, idx) => (
+              <span key={idx}>
+                {typeof w === 'string' ? w : w.word}
+                {idx !== lastRound.words.length - 1 && ','}
+              </span>
+            ))
+          )}
+        </div>
 
-        <h4 className="text-sm font-medium mt-3 mb-1">Guesses:</h4>
+
         <GuessList
           guesses={lastRound.guesses}
           myTeam={null}
