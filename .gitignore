@@ -1,0 +1,61 @@
+# Dependency directories
+node_modules/
+
+# Build outputs
+dist/
+build/ # Common build output directory for various tools
+.parcel-cache/ # Parcel cache
+
+# Log files
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Editor directories and files
+.vscode/
+!.vscode/extensions.json # Keep extensions config if desired
+.idea/
+*.iml
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# macOS specific files
+.DS_Store
+
+# VS Code specific
+.vscode/
+# Uncomment to ignore all VS Code files except extensions.json
+# .vscode/*
+# !.vscode/extensions.json
+
+# NPM / Yarn / PNPM specific
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.yarn/
+.npm/
+
+# Other temporary files
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# SvelteKit specific (if applicable, though not in current project)
+.svelte-kit/

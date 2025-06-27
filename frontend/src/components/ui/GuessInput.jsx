@@ -1,0 +1,31 @@
+import { useState } from 'react';
+import { useSocket } from '@/context/SocketContext';
+import { Button } from './Button';
+
+export default function GuessInput({ roomId }) {
+  const socket = useSocket();
+  const [guessText, setGuessText] = useState('');
+
+  const handleSubmit = () => {
+    const guesses = guessText.split(',').map((g) => g.trim()).filter(Boolean);
+    guesses.forEach((guess) => {
+      socket.emit('make-guess', { roomId, guess });
+    });
+    setGuessText('');
+  };
+
+  return (
+    <div className="mt-4">
+      <h4 className="font-semibold mb-2">Enter Guesses (comma separated)</h4>
+      <input
+        value={guessText}
+        onChange={(e) => setGuessText(e.target.value)}
+        className="w-full border border-gray-300 p-2 rounded mb-2"
+        placeholder="apple, orange, banana"
+      />
+      <Button onClick={handleSubmit} variant="success" className="w-full">
+        Submit Guess
+      </Button>
+    </div>
+  );
+}
