@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useSocket } from '../context/SocketContext';
 import { useDrop, DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import TeamColumn from '@/components/ui/TeamColumn';
-import DraggablePlayer from '@/components/ui/DraggablePlayer';
 import GameSettings from '@/components/ui/GameSettings';
 import { Button } from '@/components/ui/Button';
 import SectionCard from '@/components/ui/SectionCard';
@@ -12,9 +11,9 @@ import UnassignedColumn from '@/components/ui/UnassignedColumn';
 
 export default function Lobby() {
   const { roomId } = useParams();
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const name = searchParams.get('name');
+  const playerId = localStorage.getItem('playerId');
+  const playerName = localStorage.getItem('playerName');
   const socket = useSocket();
 
   const [players, setPlayers] = useState([]);
@@ -28,91 +27,56 @@ export default function Lobby() {
     pointsToWin: 10,
   });
 
-  const handleRoomUpdate = useCallback((playerList) => {
-    setPlayers(playerList);
-    setTeamA(prev => prev.filter(p => playerList.find(x => x.id === p.id)));
-    setTeamB(prev => prev.filter(p => playerList.find(x => x.id === p.id)));
-  }, []);
-
-  const handleSettingsUpdate = useCallback(({ settings }) => {
-    setGameSettings(settings);
-  }, []);
-
   useEffect(() => {
-    if (!socket || !name) return;
+    if (!socket || !roomId || !playerName) return;
 
-    socket.emit('join-room', { roomId, name });
+    socket.emit('join-room', { roomId, name: playerName, playerId });
 
-    socket.on('room-update', handleRoomUpdate);
-
-    socket.on('host-id', (id) => {
-      setHostId(id);
-      setIsHost(socket.id === id);
-    });
-
-    socket.on('teams-updated', ({ teams }) => {
-      setTeamA(teams.A);
-      setTeamB(teams.B);
-    });
-
+    // 🔄 Room full state (players, teams, settings, host)
     socket.on('room-state', ({ players, hostId, settings, teams }) => {
       setPlayers(players);
       setHostId(hostId);
-      setIsHost(socket.id === hostId);
+      setIsHost(playerId === hostId);
+      setGameSettings(settings || {});
+      setTeamA(teams?.A || []);
+      setTeamB(teams?.B || []);
+    });
+
+    socket.on('teams-updated', ({ teams }) => {
+      setTeamA(teams.A || []);
+      setTeamB(teams.B || []);
+    });
+
+    socket.on('settings-updated', ({ settings }) => {
       setGameSettings(settings);
-      setTeamA(teams.A);
-      setTeamB(teams.B);
     });
 
     socket.on('game-started', () => {
       navigate(`/score/${roomId}`);
     });
 
-    socket.on('settings-updated', handleSettingsUpdate);
-
     return () => {
-      socket.off('room-update', handleRoomUpdate);
-      socket.off('host-id');
-      socket.off('teams-updated');
       socket.off('room-state');
-      socket.off('settings-updated', handleSettingsUpdate);
+      socket.off('teams-updated');
+      socket.off('settings-updated');
       socket.off('game-started');
     };
-  }, [socket, roomId, name, handleRoomUpdate, handleSettingsUpdate]);
+  }, [socket, roomId, playerName]);
+
 
   const unassigned = players.filter(
-    p => !teamA.some(a => a.id === p.id) && !teamB.some(b => b.id === p.id)
+    p => !teamA.some(a => a.playerId === p.playerId) && !teamB.some(b => b.playerId === p.playerId)
   );
 
   const canStart = isHost && teamA.length >= 2 && teamB.length >= 2;
 
-  // 👇 Local drop zone for unassigned players
-  function UnassignedColumn({ players, onDrop, isHost }) {
-    const [{ isOver, canDrop }, dropRef] = useDrop({
-      accept: 'PLAYER',
-      canDrop: () => isHost,
-      drop: (item) => onDrop(item),
-      collect: (monitor) => ({
-        isOver: monitor.isOver(),
-        canDrop: monitor.canDrop(),
-      }),
-    });
-
-    return (
-      <div
-        ref={dropRef}
-        className={`w-full min-h-[80px] p-3 mb-6 rounded border-2 ${
-          isOver && canDrop ? 'border-green-500 bg-green-50' : 'border-gray-300'
-        }`}
-      >
-        <h3 className="font-semibold mb-2 text-center">Unassigned Players</h3>
-        <div className="flex flex-wrap justify-center gap-2">
-          {players.map((player) => (
-            <DraggablePlayer key={player.id} player={player} isHost={isHost} />
-          ))}
-        </div>
-      </div>
-    );
+  function emitTeamUpdate(a, b) {
+    if (isHost) {
+      socket.emit('teams-updated', {
+        roomId,
+        teams: { A: a, B: b },
+      });
+    }
   }
 
   return (
@@ -124,16 +88,11 @@ export default function Lobby() {
           <UnassignedColumn
             players={unassigned}
             onDrop={(player) => {
-              const newTeamA = teamA.filter(p => p.id !== player.id);
-              const newTeamB = teamB.filter(p => p.id !== player.id);
+              const newTeamA = teamA.filter(p => p.playerId !== player.playerId);
+              const newTeamB = teamB.filter(p => p.playerId !== player.playerId);
               setTeamA(newTeamA);
               setTeamB(newTeamB);
-              if (isHost) {
-                socket.emit('teams-updated', {
-                  roomId,
-                  teams: { A: newTeamA, B: newTeamB },
-                });
-              }
+              emitTeamUpdate(newTeamA, newTeamB);
             }}
             isHost={isHost}
           />
@@ -143,27 +102,21 @@ export default function Lobby() {
             {['Team A', 'Team B'].map((teamName) => (
               <TeamColumn
                 key={teamName}
-                name={teamName}
+                playerName={teamName}
                 players={teamName === 'Team A' ? teamA : teamB}
                 onDrop={(p) => {
                   const newTeamA =
                     teamName === 'Team A'
                       ? [...teamA, p]
-                      : teamA.filter((a) => a.id !== p.id);
+                      : teamA.filter((a) => a.playerId !== p.playerId);
                   const newTeamB =
                     teamName === 'Team B'
                       ? [...teamB, p]
-                      : teamB.filter((b) => b.id !== p.id);
+                      : teamB.filter((b) => b.playerId !== p.playerId);
 
                   setTeamA(newTeamA);
                   setTeamB(newTeamB);
-
-                  if (isHost) {
-                    socket.emit('teams-updated', {
-                      roomId,
-                      teams: { A: newTeamA, B: newTeamB },
-                    });
-                  }
+                  emitTeamUpdate(newTeamA, newTeamB);
                 }}
                 isHost={isHost}
               />

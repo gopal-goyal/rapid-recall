@@ -22,7 +22,7 @@ export default function UnassignedColumn({ players, onDrop, isHost }) {
       <h3 className="font-semibold mb-2 text-center">Unassigned Players</h3>
       <div className="flex flex-wrap justify-center gap-2">
         {players.map((player) => (
-          <DraggablePlayer key={player.id} player={player} isHost={isHost} />
+          <DraggablePlayer key={player.playerId} player={player} isHost={isHost} />
         ))}
       </div>
     </div>

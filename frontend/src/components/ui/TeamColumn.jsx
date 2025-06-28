@@ -68,9 +68,9 @@ export default function TeamColumn({
       <div className="flex flex-col gap-2 items-center">
         {players.map((p) =>
           isDroppable ? (
-            <DraggablePlayer key={p.id} player={p} isHost={isHost} />
+            <DraggablePlayer key={p.playerId} player={p} isHost={isHost} />
           ) : (
-            <PlayerBadge key={p.id} name={p.name} small />
+            <PlayerBadge key={p.playerId} name={p.name} small />
           )
         )}
       </div>

@@ -3,38 +3,19 @@ const { getRoom, updateRoom } = require('../state/roomStore');
 module.exports = function registerTeamHandlers(io, socket) {
   socket.on('teams-updated', ({ roomId, teams }) => {
     const room = getRoom(roomId);
+    const player = room.players.find(p => p.socketId === socket.id);
+    if (!player || player.playerId !== room.hostId) return;
 
-    // Validation checks
-    if (!room) return;
-    if (socket.id !== room.hostId) return; // Only host can update teams
-    if (!teams || typeof teams !== 'object') return;
 
-    // Validate teams contain only current players
-    const playerIds = new Set(room.players.map(p => p.id));
-    const isValidTeam = (team) =>
-      Array.isArray(team) && team.every(p => playerIds.has(p.id));
+    const currentPlayerIds = new Set(room.players.map(p => p.playerId));
 
-    if (!isValidTeam(teams.A) || !isValidTeam(teams.B)) {
-      console.warn(`⚠️ Invalid team update from ${socket.id}`);
-      return;
-    }
+    const isValid = team => Array.isArray(team) && team.every(p => currentPlayerIds.has(p.playerId));
+    if (!isValid(teams.A) || !isValid(teams.B)) return;
 
-    // Update using the centralized store
-    updateRoom(roomId, (room) => {
-      if (!room.gameState) {
-        room.gameState = {
-          teams: { A: [], B: [] },
-        };
-      }
-
-      room.gameState.teams = {
-        A: teams.A,
-        B: teams.B,
-      };
+    updateRoom(roomId, room => {
+      room.gameState.teams = { A: teams.A, B: teams.B };
     });
 
-    // Emit to all players in room
     io.to(roomId).emit('teams-updated', { teams });
-    console.log(`🔄 Teams updated in room ${roomId}`);
   });
 };

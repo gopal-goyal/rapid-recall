@@ -1,23 +1,58 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import SectionCard from '@/components/ui/SectionCard';
+import { useSocket } from '@/context/SocketContext';
 
 export default function Home() {
+  const socket = useSocket();
   const [name, setName] = useState('');
   const [roomId, setRoomId] = useState('');
   const navigate = useNavigate();
+  console.log('🧠 socket:', socket);
+
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on('room-created', ({ roomId, playerId, hostId }) => {
+      localStorage.setItem('playerId', playerId);
+      localStorage.setItem('playerName', name);
+      localStorage.setItem('hostId', hostId);
+      setTimeout(() => {
+        navigate(`/lobby/${roomId}`);
+      }, 100);
+    });
+
+    socket.on('room-joined', ({ roomId, playerId, hostId }) => {
+      localStorage.setItem('playerId', playerId);
+      localStorage.setItem('playerName', name);
+      localStorage.setItem('hostId', hostId);
+      setTimeout(() => {
+        navigate(`/lobby/${roomId}`);
+      }, 100);
+    });
+
+    socket.on('join-error', ({ message }) => {
+      alert(message);
+    });
+
+    return () => {
+      socket.off('room-created');
+      socket.off('room-joined');
+      socket.off('join-error');
+    };
+  }, [socket, name, navigate]);
+
 
   const handleCreate = () => {
-    const newRoomId = crypto.randomUUID().slice(0, 6);
-    navigate(`/lobby/${newRoomId}?name=${encodeURIComponent(name)}`);
+    socket.emit('create-room', { name });
   };
 
   const handleJoin = () => {
-    if (roomId) {
-      navigate(`/lobby/${roomId}?name=${encodeURIComponent(name)}`);
-    }
+    let playerId = localStorage.getItem('playerId');
+    socket.emit('join-room', { name, playerId, roomId });
   };
 
   return (
@@ -70,7 +105,5 @@ export default function Home() {
         </div>
       </div>
     </SectionCard>
-
-
   );
 }

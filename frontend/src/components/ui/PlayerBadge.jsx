@@ -5,7 +5,7 @@ export default function PlayerBadge({ name, small = false }) {
     'from-blue-400 to-green-500',
     'from-yellow-400 to-red-500',
   ];
-  const bgColor = colors[name.length % colors.length];
+  const bgColor = 'from-pink-400 to-purple-500';
 
   return (
     <div

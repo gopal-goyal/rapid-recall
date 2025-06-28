@@ -22,11 +22,11 @@ function initialGameState() {
 }
 
 // Create a new room with host and initial game state
-function createRoom(roomId, hostId, hostName) {
+function createRoom(roomId, socketId, hostPlayerId, hostName) {
   roomStates[roomId] = {
     roomId,
-    hostId,
-    players: [{ id: hostId, name: hostName }],
+    hostId: hostPlayerId,
+    players: [{ playerId: hostPlayerId, socketId: socketId, name: hostName }],
     gameState: initialGameState(),
   };
   return roomStates[roomId];

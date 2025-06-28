@@ -3,37 +3,19 @@ const { getRoom, updateRoom } = require('../state/roomStore');
 module.exports = function registerSettingsHandlers(io, socket) {
   socket.on('settings-updated', ({ roomId, settings }) => {
     const room = getRoom(roomId);
+    const player = room.players.find(p => p.socketId === socket.id);
+    if (!player || player.playerId !== room.hostId) return;
 
-    if (!room) return;
-    if (socket.id !== room.hostId) return;
 
     const validKeys = ['wordsPerRound', 'timePerTurn', 'pointsToWin'];
+    const sanitized = Object.fromEntries(
+      Object.entries(settings).filter(([k, v]) => validKeys.includes(k) && typeof v === 'number')
+    );
 
-    // Validate settings payload
-    if (
-      typeof settings !== 'object' ||
-      Object.keys(settings).some(key => !validKeys.includes(key))
-    ) {
-      console.warn(`⚠️ Invalid settings update from ${socket.id}`);
-      return;
-    }
-
-    // Apply update
-    updateRoom(roomId, (room) => {
-      if (!room.gameState) room.gameState = {};
-      if (!room.gameState.settings) {
-        room.gameState.settings = {
-          wordsPerRound: 5,
-          timePerTurn: 60,
-          pointsToWin: 10,
-        };
-      }
-
-      Object.assign(room.gameState.settings, settings);
+    updateRoom(roomId, room => {
+      room.gameState.settings = { ...room.gameState.settings, ...sanitized };
     });
 
-    // Emit new settings to everyone in room
-    io.to(roomId).emit('settings-updated', { settings });
-    console.log(`⚙️ Game settings updated in room ${roomId}:`, settings);
+    io.to(roomId).emit('settings-updated', { settings: sanitized });
   });
 };
