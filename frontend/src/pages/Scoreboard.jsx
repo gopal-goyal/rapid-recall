@@ -4,6 +4,8 @@ import { useSocket } from '../context/SocketContext';
 import { Button } from '@/components/ui/Button';
 import SectionCard from '@/components/ui/SectionCard';
 import GuessList from '@/components/ui/GuessList';
+import PlayerBadge from '@/components/ui/PlayerBadge';
+import WordList from '../components/ui/WordList';
 
 export default function Scoreboard() {
   const { roomId } = useParams();
@@ -50,95 +52,83 @@ export default function Scoreboard() {
   const isMyTurn = currentTurnPlayer?.id === socketId;
 
   return (
-    <SectionCard>
-      <h2 className="text-xl font-bold mb-4 text-center">Scoreboard</h2>
+  <SectionCard>
+    <h2 className="text-2xl font-bold mb-6 text-center">Scoreboard</h2>
 
-      {/* Winner Banner */}
-      {winner && (
-        <div className="bg-green-100 border border-green-300 text-green-800 p-4 rounded-lg text-center mb-4">
-          🎉 <strong>Team {winner}</strong> wins the game!
-          <p className="text-sm text-gray-600 mt-1">
-            Final Score — Team A: {scores.A} | Team B: {scores.B}
-          </p>
-        </div>
-      )}
+    {/* Winner Banner */}
+    {winner && (
+      <div className="bg-green-50 border border-green-300 text-green-800 p-4 rounded-xl text-center mb-6">
+        🏆 <span className="font-semibold">Team {winner}</span> wins the game!
+        <p className="text-sm text-gray-600 mt-1">
+          Final Score — <strong>Team A:</strong> {scores.A} &nbsp;|&nbsp; <strong>Team B:</strong> {scores.B}
+        </p>
+      </div>
+    )}
 
-      {/* Scores */}
-      <div className="flex justify-between mb-4 text-center font-semibold">
-        <div>
-          Team A: {scores.A}
-          <ul className="text-sm font-normal mt-1 text-gray-600">
+    {/* Score Grid */}
+    <div className="grid grid-cols-2 gap-6 mb-6 text-sm text-gray-700">
+        <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
+          <h3 className="font-bold text-blue-800 mb-3 text-center">Team A — {scores.A} pts</h3>
+          <div className="flex flex-col gap-2 items-center">
             {teams.A.map((p) => (
-              <li key={p.id}>{p.name}</li>
+              <PlayerBadge key={p.id} name={p.name} small />
             ))}
-          </ul>
+          </div>
         </div>
-        <div>
-          Team B: {scores.B}
-          <ul className="text-sm font-normal mt-1 text-gray-600">
+        <div className="bg-red-50 p-4 rounded-lg shadow-sm">
+          <h3 className="font-bold text-red-800 mb-3 text-center">Team B — {scores.B} pts</h3>
+          <div className="flex flex-col gap-2 items-center">
             {teams.B.map((p) => (
-              <li key={p.id}>{p.name}</li>
+              <PlayerBadge key={p.id} name={p.name} small />
             ))}
-          </ul>
+          </div>
         </div>
       </div>
 
-      {winner && (
-        <div className="text-center mt-6">
-          <Button
-            variant="success"
-            onClick={() => {
-              socket.emit('play-again', { roomId });
-            }}
-          >
-            Play Again
-          </Button>
-        </div>
-      )}
+    {/* Last Round Summary */}
+    <div className="mb-6">
+      <h4 className="text-sm font-medium mb-2 text-gray-700">📝 Last Round Words:</h4>
+      <WordList words={lastRound.words} emptyText="None" />
+      <h4 className="text-sm font-medium mb-2 text-gray-700">📝 Last Round Guesses:</h4>
+      <GuessList
+        guesses={lastRound.guesses}
+        myTeam={null}
+        clueGiverId={currentTurnPlayer?.id}
+      />
+    </div>
 
-      {/* Last Round Summary */}
-      <div className="mb-4">
-        <h4 className="text-sm font-medium mb-1">Last Round Words:</h4>
-        <div className="text-sm flex flex-wrap gap-x-1 gap-y-1">
-          {lastRound.words?.length === 0 ? (
-            <span className="text-gray-500">None</span>
-          ) : (
-            lastRound.words.map((w, idx) => (
-              <span key={idx}>
-                {typeof w === 'string' ? w : w.word}
-                {idx !== lastRound.words.length - 1 && ','}
-              </span>
-            ))
-          )}
-        </div>
+    {/* Turn Controls */}
+    {!winner && (
+      isMyTurn ? (
+        <Button
+          variant="success"
+          className="w-full"
+          onClick={() => {
+            socket.emit('start-turn', { roomId });
+            navigate(`/game/${roomId}`);
+          }}
+        >
+          Start Turn
+        </Button>
+      ) : (
+        <p className="text-center text-gray-500 text-sm">
+          Waiting for <strong>{currentTurnPlayer?.name || '...'}</strong> to start their turn.
+        </p>
+      )
+    )}
 
-
-        <GuessList
-          guesses={lastRound.guesses}
-          myTeam={null}
-          clueGiverId={currentTurnPlayer?.id}
-        />
+    {/* Play Again Button */}
+    {winner && (
+      <div className="text-center mt-6">
+        <Button
+          variant="success"
+          onClick={() => socket.emit('play-again', { roomId })}
+        >
+          🔁 Play Again
+        </Button>
       </div>
-
-      {/* Turn Controls */}
-      {!winner && (
-        isMyTurn ? (
-          <Button
-            variant="success"
-            className="w-full"
-            onClick={() => {
-              socket.emit('start-turn', { roomId });
-              navigate(`/game/${roomId}`);
-            }}
-          >
-            Start Turn
-          </Button>
-        ) : (
-          <p className="text-center text-gray-600">
-            Waiting for <strong>{currentTurnPlayer?.name || '...'}</strong> to start their turn.
-          </p>
-        )
-      )}
-    </SectionCard>
+    )}
+  </SectionCard>
   );
+
 }

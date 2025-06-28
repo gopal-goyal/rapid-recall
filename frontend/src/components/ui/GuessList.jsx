@@ -1,7 +1,6 @@
 export default function GuessList({ guesses, myTeam, clueGiverId }) {
   return (
     <div>
-      <h4 className="font-semibold mb-2">Guesses</h4>
       <ul className="space-y-1 text-sm">
         {guesses.map((g, i) => {
           const isSameTeam = g.team === myTeam;

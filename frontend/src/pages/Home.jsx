@@ -22,31 +22,55 @@ export default function Home() {
 
   return (
     <SectionCard>
-      <h1 className="text-xl font-bold mb-4 text-center">Rapid Recall</h1>
-
-      <Input
-        placeholder="Enter your name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        className="mb-4"
-      />
-
-      <div className="flex flex-col gap-3">
-        <Button onClick={handleCreate} disabled={!name}>
-          Create Room
-        </Button>
-
-        <div className="flex gap-2">
+      <div className="space-y-6 max-w-md mx-auto w-full">
+        {/* Name Input */}
+        <div>
+          <label htmlFor="name" className="text-sm font-medium text-gray-700 mb-1 block">
+            Your Name
+          </label>
           <Input
-            placeholder="Room ID"
-            value={roomId}
-            onChange={(e) => setRoomId(e.target.value)}
+            id="name"
+            placeholder="Enter your name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
-          <Button onClick={handleJoin} disabled={!name || !roomId}>
-            Join
+        </div>
+
+        {/* Create Room Section */}
+        <div>
+          <Button onClick={handleCreate} disabled={!name} className="w-full">
+            Create New Room
           </Button>
+        </div>
+
+        {/* Divider */}
+        <div className="flex items-center gap-4 text-gray-400 text-sm">
+          <hr className="flex-grow border-gray-300" />
+          OR
+          <hr className="flex-grow border-gray-300" />
+        </div>
+
+        {/* Join Room Section */}
+        <div>
+          <label htmlFor="room-id" className="text-sm font-medium text-gray-700 mb-1 block">
+            Join Existing Room
+          </label>
+          <div className="flex gap-2">
+            <Input
+              id="room-id"
+              placeholder="Room ID"
+              value={roomId}
+              onChange={(e) => setRoomId(e.target.value)}
+              className="flex-1"
+            />
+            <Button onClick={handleJoin} disabled={!name || !roomId} className="w-28">
+              Join
+            </Button>
+          </div>
         </div>
       </div>
     </SectionCard>
+
+
   );
 }

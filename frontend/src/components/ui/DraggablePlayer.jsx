@@ -1,5 +1,6 @@
-// ✅ Updated: components/ui/DraggablePlayer.jsx
+// components/ui/DraggablePlayer.jsx
 import { useDrag } from 'react-dnd';
+import PlayerBadge from './PlayerBadge';
 
 export default function DraggablePlayer({ player, isHost }) {
   const [{ isDragging }, dragRef] = useDrag({
@@ -14,11 +15,9 @@ export default function DraggablePlayer({ player, isHost }) {
   return (
     <div
       ref={dragRef}
-      className={`px-4 py-2 rounded shadow border bg-white text-center ${
-        isDragging ? 'opacity-50' : ''
-      }`}
+      className={`cursor-pointer ${isDragging ? 'opacity-40 scale-95' : ''}`}
     >
-      {player.name}
+      <PlayerBadge name={player.name} />
     </div>
   );
 }

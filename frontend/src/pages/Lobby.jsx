@@ -7,6 +7,7 @@ import TeamColumn from '@/components/ui/TeamColumn';
 import DraggablePlayer from '@/components/ui/DraggablePlayer';
 import GameSettings from '@/components/ui/GameSettings';
 import { Button } from '@/components/ui/Button';
+import SectionCard from '@/components/ui/SectionCard';
 import UnassignedColumn from '@/components/ui/UnassignedColumn';
 
 export default function Lobby() {
@@ -116,9 +117,8 @@ export default function Lobby() {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="min-h-screen flex flex-col items-center justify-center bg-blue-50 p-6">
-        <div className="bg-white p-6 rounded-xl shadow w-full max-w-4xl">
-          <h2 className="text-xl font-bold mb-4 text-center">Lobby: {roomId}</h2>
+      <SectionCard>
+          <h2 className="text-xl font-bold mb-4 text-center">Room Code: {roomId}</h2>
 
           {/* ✅ Drop zone for unassigned players */}
           <UnassignedColumn
@@ -206,8 +206,7 @@ export default function Lobby() {
                 : 'Waiting for host to start the game...'}
             </p>
           )}
-        </div>
-      </div>
+      </SectionCard>
     </DndProvider>
   );
 }

@@ -5,6 +5,7 @@ import WordList from '@/components/ui/WordList';
 import GuessInput from '@/components/ui/GuessInput';
 import GuessList from '@/components/ui/GuessList';
 import Timer from '@/components/ui/Timer';
+import SectionCard from '@/components/ui/SectionCard';
 
 export default function GameScreen() {
   const { roomId } = useParams();
@@ -67,18 +68,43 @@ export default function GameScreen() {
   
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-4">
-      <Timer timeLeft={timeLeft} />
-        <div className="w-full max-w-3xl mt-4 bg-white rounded-xl p-4 shadow-md">
-        {isClueGiver || !isTeammateOfClueGiver ? (
-        <WordList words={words} highlightGuessed />
-        ) : (
-        <GuessInput roomId={roomId} />
-        )}
+    <SectionCard>
+      {/* Top: Timer */}
+      <div className="flex justify-center mb-2">
+        <Timer timeLeft={timeLeft} />
+      </div>
+
+      {/* Game Box */}
+      <div className="w-full max-w-3xl bg-gradient-to-br from-yellow-50 to-orange-100 rounded-xl p-6 shadow-lg border border-orange-200">
+        {/* Word or Guess Area */}
+        <div className="mb-4">
+          {isClueGiver || !isTeammateOfClueGiver ? (
+            <>
+              <h3 className="text-center text-lg font-semibold text-orange-800 mb-2">
+                Words to Describe
+              </h3>
+              <WordList words={words} center />
+            </>
+          ) : (
+            <>
+              <h3 className="text-center text-lg font-semibold text-blue-800 mb-2">
+                💭 Guess the Word!
+              </h3>
+              <GuessInput roomId={roomId} />
+            </>
+          )}
+        </div>
+
+        {/* Guess Feed */}
         <div className="mt-6">
-          <GuessList guesses={guesses} myTeam={myTeam} clueGiverId={currentPlayer?.id} />
+          <h4 className="text-sm text-gray-600 mb-2 font-medium">🔎 Guesses so far:</h4>
+          <GuessList
+            guesses={guesses}
+            myTeam={myTeam}
+            clueGiverId={currentPlayer?.id}
+          />
         </div>
       </div>
-    </div>
+    </SectionCard>
   );
 }
