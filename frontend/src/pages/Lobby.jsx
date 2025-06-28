@@ -146,7 +146,6 @@ export default function Lobby() {
                     roomId,
                     teams: { A: teamA, B: teamB },
                   });
-                  navigate(`/score/${roomId}`);
                 }}
               >
                 Start Game

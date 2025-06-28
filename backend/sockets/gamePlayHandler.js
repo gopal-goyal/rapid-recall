@@ -68,7 +68,8 @@ module.exports = function registerGameplayHandlers(io, socket) {
     if (room.gameState.currentPhase === 'end') return;
 
     const currentPlayer = room.gameState.turnOrder[room.gameState.currentTurnIndex];
-    if (socket.id !== currentPlayer.id) return;
+    const player = room.players.find(p => p.socketId === socket.id);
+    if (!player || player.playerId !== currentPlayer.playerId) return;
 
     const timePerTurn = room.gameState.settings.timePerTurn;
 
@@ -78,6 +79,8 @@ module.exports = function registerGameplayHandlers(io, socket) {
       room.gameState.guesses = [];
       room.gameState.timeLeft = timePerTurn;
     });
+
+    io.to(roomId).emit('navigate-to-game');
 
     io.to(roomId).emit('game-state', {
       words: room.gameState.currentWords,

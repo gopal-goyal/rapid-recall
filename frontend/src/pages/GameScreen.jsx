@@ -12,7 +12,7 @@ export default function GameScreen() {
   const socket = useSocket();
   const navigate = useNavigate();
 
-  const [socketId, setSocketId] = useState(null);
+  const playerId = localStorage.getItem('playerId');
   const [words, setWords] = useState([]); // [{ word: 'apple', guessed: false }]
   const [guesses, setGuesses] = useState([]); // [{ playerId, guess, correct }]
   const [currentPlayer, setCurrentPlayer] = useState(null);
@@ -21,7 +21,6 @@ export default function GameScreen() {
 
   useEffect(() => {
     if (!socket) return;
-    setSocketId(socket.id);
 
     socket.emit('game-screen-loaded', { roomId });
 
@@ -57,12 +56,9 @@ export default function GameScreen() {
     };
   }, [socket, roomId]);
 
-//   const isClueGiver = currentPlayer?.id === socketId;
-//   const myTeam = teams.A.some(p => p.id === socketId) ? 'A' : 'B';
-//   const isTeammate = !isClueGiver && teams[myTeam].some(p => p.id === socketId);
-  const isClueGiver = currentPlayer?.id === socketId;
-  const currentPlayerTeam = teams.A.some(p => p.id === currentPlayer?.id) ? 'A' : (teams.B.some(p => p.id === currentPlayer?.id) ? 'B' : null);
-  const myTeam = teams.A.some(p => p.id === socketId) ? 'A' : 'B';
+  const isClueGiver = currentPlayer?.playerId === playerId;
+  const currentPlayerTeam = teams.A.some(p => p.playerId === currentPlayer?.playerId) ? 'A' : (teams.B.some(p => p.playerId === currentPlayer?.playerId) ? 'B' : null);
+  const myTeam = teams.A.some(p => p.playerId === playerId) ? 'A' : 'B';
   const isTeammateOfClueGiver = !isClueGiver && myTeam === currentPlayerTeam;
  
   
@@ -101,7 +97,7 @@ export default function GameScreen() {
           <GuessList
             guesses={guesses}
             myTeam={myTeam}
-            clueGiverId={currentPlayer?.id}
+            clueGiverId={currentPlayer?.playerId}
           />
         </div>
       </div>

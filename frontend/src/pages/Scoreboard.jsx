@@ -11,18 +11,16 @@ export default function Scoreboard() {
   const { roomId } = useParams();
   const socket = useSocket();
   const navigate = useNavigate();
-
   const [scores, setScores] = useState({ A: 0, B: 0 });
   const [teams, setTeams] = useState({ A: [], B: [] });
   const [lastRound, setLastRound] = useState({ words: [], guesses: [] });
   const [currentTurnPlayer, setCurrentTurnPlayer] = useState(null);
-  const [socketId, setSocketId] = useState(null);
+  const playerId = localStorage.getItem('playerId');
   const [winner, setWinner] = useState(null);
 
   useEffect(() => {
     if (!socket) return;
 
-    setSocketId(socket.id);
     socket.emit('score-screen-loaded', { roomId });
 
     socket.on('score-update', ({ scores, teams }) => {
@@ -49,7 +47,7 @@ export default function Scoreboard() {
     };
   }, [socket, roomId]);
 
-  const isMyTurn = currentTurnPlayer?.id === socketId;
+  const isMyTurn = currentTurnPlayer?.playerId === playerId;
 
   return (
   <SectionCard>
@@ -71,7 +69,7 @@ export default function Scoreboard() {
           <h3 className="font-bold text-blue-800 mb-3 text-center">Team A — {scores.A} pts</h3>
           <div className="flex flex-col gap-2 items-center">
             {teams.A.map((p) => (
-              <PlayerBadge key={p.id} name={p.name} small />
+              <PlayerBadge key={p.playerId} name={p.name} small />
             ))}
           </div>
         </div>
@@ -79,7 +77,7 @@ export default function Scoreboard() {
           <h3 className="font-bold text-red-800 mb-3 text-center">Team B — {scores.B} pts</h3>
           <div className="flex flex-col gap-2 items-center">
             {teams.B.map((p) => (
-              <PlayerBadge key={p.id} name={p.name} small />
+              <PlayerBadge key={p.playerId} name={p.name} small />
             ))}
           </div>
         </div>
@@ -93,7 +91,7 @@ export default function Scoreboard() {
       <GuessList
         guesses={lastRound.guesses}
         myTeam={null}
-        clueGiverId={currentTurnPlayer?.id}
+        clueGiverId={currentTurnPlayer?.playerId}
       />
     </div>
 

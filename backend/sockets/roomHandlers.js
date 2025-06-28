@@ -68,8 +68,6 @@ module.exports = function registerRoomHandlers(io, socket) {
     });
   });
 
-
-
   // ✅ HANDLE DISCONNECT
   socket.on('disconnect', () => {
     const allRooms = getAllRooms();

@@ -4,7 +4,8 @@ const { generateWords } = require('../utils/wordsGenerator');
 module.exports = function registerGameHandlers(io, socket) {
   socket.on('start-game', ({ roomId, teams }) => {
     const room = getRoom(roomId);
-    if (!room || socket.id !== room.hostId) return;
+    const player = room.players.find(p => p.socketId === socket.id);
+    if (!room || player.playerId !== room.hostId) return;
 
     // Generate interleaved turn order with random starting team
     const randomOrder = Math.random() < 0.5 ? ['A', 'B'] : ['B', 'A'];
@@ -60,24 +61,6 @@ module.exports = function registerGameHandlers(io, socket) {
     if (room.gameState.currentPhase === 'end' && room.gameState.winner) {
       socket.emit('game-ended', { winner: room.gameState.winner });
     }
-  });
-
-  socket.on('start-turn', ({ roomId }) => {
-    const room = getRoom(roomId);
-    if (!room) return;
-
-    const currentPlayer = room.gameState.turnOrder[room.gameState.currentTurnIndex];
-    if (socket.id !== currentPlayer.id) return;
-
-    console.log(`🎮 ${currentPlayer.name} started their turn`);
-
-    updateRoom(roomId, (room) => {
-      room.gameState.currentPhase = 'game';
-      room.gameState.lastRound = { words: generateWords(), guesses: [] };
-      room.gameState.timer = room.gameState.settings.timePerTurn || 60;
-    });
-
-    io.to(roomId).emit('navigate-to-game');
   });
 
   socket.on('play-again', ({ roomId }) => {
