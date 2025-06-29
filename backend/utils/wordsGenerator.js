@@ -20,9 +20,6 @@ const sampleWords = [
   // Festivals & Culture
   "diwali", "holi", "eid", "navratri", "garba", "rakhi", "baraat", "mehendi", "puja", "mandir", "ladoo",
 
-  // NSFW / 18+ / Edgy (mild)
-  "condom", "honeymoon", "boobs", "bra", "panty", "sex", "hookup", "strip", "vodka", "threesome", "nudes",
-
   // Political & Satirical
   "modi", "rahul gandhi", "parliament", "vote", "protest", "chowkidar", "scam", "bhakt", "aandolan",
 
@@ -33,8 +30,14 @@ const sampleWords = [
   "pubg", "valorant", "kaun banega crorepati", "splitsvilla", "shark tank", "mtv", "ipl", "cricket", "wwe",
 
   // Flirty & Funny
-  "bf", "gf", "ex", "breakup", "cheater", "cringe reel", "late night", "goodnight", "eyeliner", "dhoka"
+  "bf", "gf", "ex", "breakup", "cheater", "cringe reel", "late night", "goodnight", "eyeliner", "dhoka",
+
+  // NSFW / 18+ (toggle required to include these)
+  "condom", "honeymoon", "boobs", "bra", "panty", "sex", "hookup", "strip", "vodka", "threesome", "nudes",
+  "Tatte", "Third leg", "Chamanprash", "Loose motion", "Choole bhature", "Baingan", "Moti gand",
+  "Chotti luli", "Camel toe", "Periods blood", "Wet panty", "Double penetration", "Black hole"
 ];
+
 
 
 function generateWords(n = 5) {
