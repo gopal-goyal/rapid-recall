@@ -1,15 +1,16 @@
+// components/ui/TeamPanel.jsx
 import { useDrop } from 'react-dnd';
 import DraggablePlayer from './DraggablePlayer';
 import PlayerBadge from './PlayerBadge';
 import { useRef } from 'react';
 
-export default function TeamColumn({
-  name,
-  players,
+export default function TeamPanel({
+  teamName,         // "Team A" or "Team B"
+  players = [],     // array of player objects
+  score = null,     // optional: number
+  isHost = false,   // for drag-drop
+  isDroppable = false,
   onDrop = () => {},
-  isHost = false,
-  isDroppable = true,
-  score = null,
 }) {
   const localRef = useRef(null);
 
@@ -26,7 +27,7 @@ export default function TeamColumn({
     },
   };
 
-  const { bg, text, border } = teamStyles[name] || {
+  const { bg, text, border } = teamStyles[teamName] || {
     bg: 'bg-gray-50',
     text: 'text-gray-800',
     border: 'border-gray-200',
@@ -34,7 +35,6 @@ export default function TeamColumn({
 
   let dropRef = localRef;
 
-  // ✅ Only useDrop if allowed
   const dropProps = isDroppable
     ? useDrop({
         accept: 'PLAYER',
@@ -48,7 +48,7 @@ export default function TeamColumn({
     : null;
 
   if (isDroppable && dropProps) {
-    dropRef = dropProps[1]; // the actual ref
+    dropRef = dropProps[1];
   }
 
   const isOver = dropProps?.[0]?.isOver ?? false;
@@ -57,13 +57,13 @@ export default function TeamColumn({
   return (
     <div
       ref={dropRef}
-      className={`p-4 rounded-lg shadow-sm w-full min-h-[200px]
-        ${bg} ${border} border-2 ${
-        isDroppable && isOver && canDrop ? 'border-green-500 bg-green-50' : ''
-      }`}
+      className={`p-4 rounded-lg shadow-sm w-full min-h-[200px] transition
+        ${bg} ${border} border
+        ${isDroppable && isOver && canDrop ? 'border-green-500 bg-green-50' : ''}
+      `}
     >
       <h3 className={`font-bold mb-3 text-center ${text}`}>
-        {name} {score !== null && `— ${score} pts`}
+        {teamName} {score !== null && `— ${score} pts`}
       </h3>
       <div className="flex flex-col gap-2 items-center">
         {players.map((p) =>

@@ -4,8 +4,8 @@ import { useSocket } from '../context/SocketContext';
 import { Button } from '@/components/ui/Button';
 import SectionCard from '@/components/ui/SectionCard';
 import GuessList from '@/components/ui/GuessList';
-import PlayerBadge from '@/components/ui/PlayerBadge';
 import WordList from '../components/ui/WordList';
+import TeamPanel from '@/components/ui/TeamPanel';
 
 export default function Scoreboard() {
   const { roomId } = useParams();
@@ -64,36 +64,30 @@ export default function Scoreboard() {
     )}
 
     {/* Score Grid */}
-    <div className="grid grid-cols-2 gap-6 mb-6 text-sm text-gray-700">
-        <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
-          <h3 className="font-bold text-blue-800 mb-3 text-center">Team A — {scores.A} pts</h3>
-          <div className="flex flex-col gap-2 items-center">
-            {teams.A.map((p) => (
-              <PlayerBadge key={p.playerId} name={p.name} small />
-            ))}
-          </div>
-        </div>
-        <div className="bg-red-50 p-4 rounded-lg shadow-sm">
-          <h3 className="font-bold text-red-800 mb-3 text-center">Team B — {scores.B} pts</h3>
-          <div className="flex flex-col gap-2 items-center">
-            {teams.B.map((p) => (
-              <PlayerBadge key={p.playerId} name={p.name} small />
-            ))}
-          </div>
-        </div>
-      </div>
+    <div className="grid grid-cols-2 gap-6 mb-6">
+      <TeamPanel teamName="Team A" players={teams.A} score={scores.A} />
+      <TeamPanel teamName="Team B" players={teams.B} score={scores.B} />
+    </div>
 
     {/* Last Round Summary */}
-    <div className="mb-6">
-      <h4 className="text-sm font-medium mb-2 text-gray-700">📝 Last Round Words:</h4>
-      <WordList words={lastRound.words} emptyText="None" />
-      <h4 className="text-sm font-medium mb-2 text-gray-700">📝 Last Round Guesses:</h4>
-      <GuessList
-        guesses={lastRound.guesses}
-        myTeam={null}
-        clueGiverId={currentTurnPlayer?.playerId}
-      />
+    <div className="mb-6 space-y-4">
+      {/* Last Round Words Box */}
+      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <h4 className="text-sm font-medium mb-2 text-yellow-800">📝 Last Round Words:</h4>
+        <WordList words={lastRound.words} emptyText="None" />
+      </div>
+
+      {/* Last Round Guesses Box */}
+      <div className="bg-gray-100 border border-gray-300 rounded-lg p-4">
+        <h4 className="text-sm font-medium mb-2 text-gray-800">📝 Last Round Guesses:</h4>
+        <GuessList
+          guesses={lastRound.guesses}
+          myTeam={null}
+          clueGiverId={currentTurnPlayer?.playerId}
+        />
+      </div>
     </div>
+
 
     {/* Turn Controls */}
     {!winner && (
@@ -122,7 +116,7 @@ export default function Scoreboard() {
           variant="success"
           onClick={() => socket.emit('play-again', { roomId })}
         >
-          🔁 Play Again
+          Play Again
         </Button>
       </div>
     )}

@@ -44,8 +44,7 @@ module.exports = function registerGameHandlers(io, socket) {
   socket.on('score-screen-loaded', ({ roomId }) => {
     const room = getRoom(roomId);
     if (!room) return;
-
-    console.log('📊 Score screen loaded — teams:', room.gameState.teams);
+    console.log(`Current game state:`, room.gameState);
 
     const { scores, teams, lastRound, currentTurnIndex, turnOrder, gameState } = room.gameState;
     const currentPlayer = turnOrder[currentTurnIndex];

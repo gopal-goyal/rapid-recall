@@ -3,11 +3,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useSocket } from '../context/SocketContext';
 import { useDrop, DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import TeamColumn from '@/components/ui/TeamColumn';
 import GameSettings from '@/components/ui/GameSettings';
 import { Button } from '@/components/ui/Button';
 import SectionCard from '@/components/ui/SectionCard';
 import UnassignedColumn from '@/components/ui/UnassignedColumn';
+import TeamPanel from '@/components/ui/TeamPanel';
 
 export default function Lobby() {
   const { roomId } = useParams();
@@ -99,28 +99,32 @@ export default function Lobby() {
 
           {/* Team Columns */}
           <div className="flex justify-center gap-4 mb-6">
-            {['Team A', 'Team B'].map((teamName) => (
-              <TeamColumn
-                key={teamName}
-                playerName={teamName}
-                players={teamName === 'Team A' ? teamA : teamB}
-                onDrop={(p) => {
-                  const newTeamA =
-                    teamName === 'Team A'
-                      ? [...teamA, p]
-                      : teamA.filter((a) => a.playerId !== p.playerId);
-                  const newTeamB =
-                    teamName === 'Team B'
-                      ? [...teamB, p]
-                      : teamB.filter((b) => b.playerId !== p.playerId);
-
-                  setTeamA(newTeamA);
-                  setTeamB(newTeamB);
-                  emitTeamUpdate(newTeamA, newTeamB);
-                }}
-                isHost={isHost}
-              />
-            ))}
+            <TeamPanel
+              teamName="Team A"
+              players={teamA}
+              isDroppable={true}
+              isHost={isHost}
+              onDrop={(p) => {
+                const newTeamA = [...teamA, p];
+                const newTeamB = teamB.filter((b) => b.playerId !== p.playerId);
+                setTeamA(newTeamA);
+                setTeamB(newTeamB);
+                emitTeamUpdate(newTeamA, newTeamB);
+              }}
+            />
+            <TeamPanel
+              teamName="Team B"
+              players={teamB}
+              isDroppable={true}
+              isHost={isHost}
+              onDrop={(p) => {
+                const newTeamB = [...teamB, p];
+                const newTeamA = teamA.filter((a) => a.playerId !== p.playerId);
+                setTeamA(newTeamA);
+                setTeamB(newTeamB);
+                emitTeamUpdate(newTeamA, newTeamB);
+              }}
+            />
           </div>
 
           {/* Game Settings */}
