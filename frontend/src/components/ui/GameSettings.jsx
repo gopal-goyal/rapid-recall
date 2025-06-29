@@ -12,6 +12,7 @@ export default function GameSettings({ isHost, settings, onUpdate }) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {/* Words per round */}
           <label className="flex flex-col">
             <span className="text-gray-500 mb-1">Words / Round</span>
             <input
@@ -24,6 +25,7 @@ export default function GameSettings({ isHost, settings, onUpdate }) {
             />
           </label>
 
+          {/* Time per turn */}
           <label className="flex flex-col">
             <span className="text-gray-500 mb-1">Time / Turn (s)</span>
             <input
@@ -36,6 +38,7 @@ export default function GameSettings({ isHost, settings, onUpdate }) {
             />
           </label>
 
+          {/* Points to win */}
           <label className="flex flex-col">
             <span className="text-gray-500 mb-1">Points to Win</span>
             <input
@@ -46,6 +49,21 @@ export default function GameSettings({ isHost, settings, onUpdate }) {
               onChange={(e) => handleChange('pointsToWin', parseInt(e.target.value))}
               className="px-2 py-1 border border-gray-300 rounded-sm bg-white focus:outline-none focus:ring-1 focus:ring-blue-400"
             />
+          </label>
+        </div>
+
+        {/* 🔞 NSFW toggle */}
+        <div className="mt-4 flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="includeNsfw"
+            disabled={!isHost}
+            checked={!!settings.includeNsfw}
+            onChange={(e) => handleChange('includeNsfw', e.target.checked)}
+            className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+          />
+          <label htmlFor="includeNsfw" className="text-sm text-gray-700 select-none">
+            Include NSFW words
           </label>
         </div>
       </div>

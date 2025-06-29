@@ -8,7 +8,7 @@ module.exports = function registerGameplayHandlers(io, socket) {
 
     const { gameState } = room;
     const currentPlayer = gameState.turnOrder[gameState.currentTurnIndex];
-    const words = gameState.currentWords || generateWords(gameState.settings.wordsPerRound);
+    const words = gameState.currentWords;
     const guesses = gameState.guesses || [];
 
     updateRoom(roomId, room => {
@@ -30,13 +30,16 @@ module.exports = function registerGameplayHandlers(io, socket) {
     if (!room) return;
 
     const wordList = room.gameState.currentWords;
-    const correct = wordList.some(w => w.word === guess && !w.guessed);
+    const normalizedGuess = guess.trim().toLowerCase();
+
+    const correct = wordList.some(w =>
+      w.word.trim().toLowerCase() === normalizedGuess && !w.guessed
+    );
 
     const player = room.players.find(p => p.socketId === socket.id);
     if (!player) return;
 
     const team = room.gameState.teams.A.some(p => p.playerId === player.playerId) ? 'A' : 'B';
-
 
     const newGuess = {
       playerId: player.playerId,
@@ -50,7 +53,7 @@ module.exports = function registerGameplayHandlers(io, socket) {
       room.gameState.guesses.push(newGuess);
       if (correct) {
         room.gameState.currentWords = room.gameState.currentWords.map(w =>
-          w.word === guess ? { ...w, guessed: true } : w
+          w.word.trim().toLowerCase() === normalizedGuess ? { ...w, guessed: true } : w
         );
       }
     });
@@ -63,6 +66,7 @@ module.exports = function registerGameplayHandlers(io, socket) {
       endTurn(io, roomId);
     }
   });
+
 
   socket.on('start-turn', ({ roomId }) => {
     const room = getRoom(roomId);
@@ -77,7 +81,7 @@ module.exports = function registerGameplayHandlers(io, socket) {
     const timePerTurn = room.gameState.settings.timePerTurn;
 
     updateRoom(roomId, room => {
-      room.gameState.currentWords = generateWords(room.gameState.settings.wordsPerRound);
+      room.gameState.currentWords = generateWords(room.gameState.settings.wordsPerRound, room.gameState.settings.includeNsfw);
       room.gameState.turnEnded = false;
       room.gameState.guesses = [];
       room.gameState.timeLeft = timePerTurn;
