@@ -7,11 +7,21 @@ export default function GuessInput({ roomId }) {
   const [guessText, setGuessText] = useState('');
 
   const handleSubmit = () => {
-    const guesses = guessText.split(',').map((g) => g.trim()).filter(Boolean);
+    const guesses = guessText
+      .split(',')
+      .map((g) => g.trim())
+      .filter(Boolean);
     guesses.forEach((guess) => {
       socket.emit('make-guess', { roomId, guess });
     });
     setGuessText('');
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // prevent form submit or newline
+      handleSubmit();
+    }
   };
 
   return (
@@ -20,6 +30,7 @@ export default function GuessInput({ roomId }) {
       <input
         value={guessText}
         onChange={(e) => setGuessText(e.target.value)}
+        onKeyDown={handleKeyDown}
         className="w-full border border-gray-300 p-2 rounded mb-2"
         placeholder="apple, orange, banana"
       />
