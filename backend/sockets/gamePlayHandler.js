@@ -32,12 +32,15 @@ module.exports = function registerGameplayHandlers(io, socket) {
     const wordList = room.gameState.currentWords;
     const correct = wordList.some(w => w.word === guess && !w.guessed);
 
-    const player = [...room.gameState.teams.A, ...room.gameState.teams.B].find(p => p.id === socket.id);
-    const team = room.gameState.teams.A.some(p => p.id === socket.id) ? 'A' : 'B';
+    const player = room.players.find(p => p.socketId === socket.id);
+    if (!player) return;
+
+    const team = room.gameState.teams.A.some(p => p.playerId === player.playerId) ? 'A' : 'B';
+
 
     const newGuess = {
-      playerId: socket.id,
-      playerName: player?.name || 'Unknown',
+      playerId: player.playerId,
+      playerName: player.name,
       team,
       guess,
       correct,
