@@ -2,7 +2,7 @@ const registerRoomHandlers = require('./roomHandlers');
 const registerGameHandlers = require('./gameHandlers');
 const registerTeamHandlers = require('./teamHandlers');
 const registerSettingsHandlers = require('./settingsHandler');
-const registerGameplayHandlers = require('./gameplayHandler');
+const registerGameplayHandlers = require('./gamePlayHandler');
 
 
 module.exports = function registerSocketHandlers(io) {
