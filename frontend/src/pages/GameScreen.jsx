@@ -18,6 +18,8 @@ export default function GameScreen() {
   const [currentPlayer, setCurrentPlayer] = useState(null);
   const [teams, setTeams] = useState({ A: [], B: [] });
   const [timeLeft, setTimeLeft] = useState(60);
+  const [totalTime, setTotalTime] = useState(60);
+
 
   useEffect(() => {
     if (!socket) return;
@@ -30,6 +32,7 @@ export default function GameScreen() {
       setCurrentPlayer(currentPlayer);
       setTeams(teams);
       setTimeLeft(timeLeft);
+      setTotalTime(timeLeft);
     });
 
     socket.on('guess-made', (newGuess) => {
@@ -67,7 +70,7 @@ export default function GameScreen() {
     <SectionCard>
       {/* Top: Timer */}
       <div className="flex justify-center mb-2">
-        <Timer timeLeft={timeLeft} />
+        <Timer timeLeft={timeLeft} totalTime={totalTime} />
       </div>
 
       {/* Game Box */}
