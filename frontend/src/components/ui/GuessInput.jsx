@@ -26,13 +26,14 @@ export default function GuessInput({ roomId }) {
 
   return (
     <div className="mt-4">
-      <h4 className="font-semibold mb-2">Enter Guesses (comma separated)</h4>
+      <h4 className="font-semibold mb-2">Guess and hit Enter</h4>
       <input
         value={guessText}
         onChange={(e) => setGuessText(e.target.value)}
         onKeyDown={handleKeyDown}
         className="w-full border border-gray-300 p-2 rounded mb-2"
-        placeholder="apple, orange, banana"
+        placeholder="make a guess..."
+        autoComplete="off"
       />
       <Button onClick={handleSubmit} variant="success" className="w-full">
         Submit Guess

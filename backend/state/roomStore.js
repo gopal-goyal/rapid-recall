@@ -7,6 +7,7 @@ function initialGameState() {
       wordsPerRound: 5,
       timePerTurn: 60,
       pointsToWin: 10,
+      includeNsfw: false,
     },
     teams: { A: [], B: [] },
     scores: { A: 0, B: 0 },

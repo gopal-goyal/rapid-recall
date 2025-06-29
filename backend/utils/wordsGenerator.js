@@ -1,4 +1,5 @@
-const sampleWords = [
+// ... existing code ...
+const cleanWords = [
   // General
   "apple", "book", "cat", "river", "mountain", "phone", "tree", "car",
 
@@ -26,22 +27,24 @@ const sampleWords = [
   // Random Indian Elements
   "rickshaw", "chai", "paan", "ganja", "sanskari", "tinder", "swag", "desi", "traffic", "mirchi", "censor",
 
-  // Games & Shows
-  "pubg", "valorant", "kaun banega crorepati", "splitsvilla", "shark tank", "mtv", "ipl", "cricket", "wwe",
-
   // Flirty & Funny
   "bf", "gf", "ex", "breakup", "cheater", "cringe reel", "late night", "goodnight", "eyeliner", "dhoka",
+];
 
+const nsfwWords = [
   // NSFW / 18+ (toggle required to include these)
   "condom", "honeymoon", "boobs", "bra", "panty", "sex", "hookup", "strip", "vodka", "threesome", "nudes",
   "Tatte", "Third leg", "Chamanprash", "Loose motion", "Choole bhature", "Baingan", "Moti gand",
   "Chotti luli", "Camel toe", "Periods blood", "Wet panty", "Double penetration", "Black hole"
 ];
 
+function generateWords(n = 5, includeNsfw = false) {
+  let wordsPool = [...cleanWords];
+  if (includeNsfw) {
+    wordsPool = wordsPool.concat(nsfwWords);
+  }
 
-
-function generateWords(n = 5) {
-  const shuffled = [...sampleWords].sort(() => Math.random() - 0.5);
+  const shuffled = wordsPool.sort(() => Math.random() - 0.5);
   return shuffled.slice(0, n).map(w => ({ word: w, guessed: false }));
 }
 

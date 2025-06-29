@@ -1,5 +1,4 @@
 const { getRoom, updateRoom } = require('../state/roomStore');
-const { generateWords } = require('../utils/wordsGenerator');
 
 module.exports = function registerGameHandlers(io, socket) {
   socket.on('start-game', ({ roomId, teams }) => {
