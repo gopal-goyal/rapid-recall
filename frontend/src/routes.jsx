@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Lobby from './pages/Lobby';
 import Scoreboard from './pages/ScoreBoard';
 import GameScreen from './pages/GameScreen';
+import NotFound from './pages/NotFound';
 
 export default function AppRoutes() {
   return (
@@ -13,6 +14,7 @@ export default function AppRoutes() {
         <Route path="/lobby/:roomId" element={<Lobby />} />
         <Route path="/score/:roomId" element={<Scoreboard />} />
         <Route path="/game/:roomId" element={<GameScreen />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
