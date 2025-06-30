@@ -13,7 +13,7 @@ module.exports = function registerRoomHandlers(io, socket) {
   const room = getRoom(roomId);
   socket.emit('room-exists-response', { exists: !!room });
   });
-
+  
   // CREATE ROOM
   socket.on('create-room', ({ name }) => {
     const roomId = uuidv4().slice(0, 6); // Generate a short room ID
@@ -45,19 +45,27 @@ module.exports = function registerRoomHandlers(io, socket) {
       return;
     }
 
-    let player = room.players.find(p => p.playerId === playerId);
+    let player =
+      room.players.find(p => p.playerId === playerId) ||
+      room.disconnectedPlayers.find(p => p.playerId === playerId);
 
     if (player) {
-      // 🧠 Reconnection or refresh: update socketId
+      // 🧠 Reconnect: update socketId and name
       player.socketId = socket.id;
-      player.name = name; // Optional: update name
+      player.name = name;
+
+      // ♻️ If coming from disconnected list, restore to active players
+      if (!room.players.includes(player)) {
+        room.disconnectedPlayers = room.disconnectedPlayers.filter(p => p.playerId !== playerId);
+        room.players.push(player);
+      }
     } else {
-      // 👤 New player
-      const actualPlayerId = playerId || uuidv4();
-      player = { playerId: actualPlayerId, socketId: socket.id, name };
+      // 🆕 New player
+      playerId = playerId || uuidv4();
+      player = { playerId, socketId: socket.id, name };
       room.players.push(player);
-      playerId = actualPlayerId; // make sure we return this
     }
+
 
     socket.join(roomId);
 
@@ -89,8 +97,10 @@ module.exports = function registerRoomHandlers(io, socket) {
 
       const wasHost = room.hostId === player.playerId;
 
-      // Remove the player using playerId
+      // Remove the player using playerId and add to disconnectedPlayers
+      room.disconnectedPlayers.push(player);
       room.players = room.players.filter(p => p.playerId !== player.playerId);
+      console.log(`room details after deletion:`, room);
 
       // 🧹 If room is empty, delete it
       if (room.players.length === 0) {
