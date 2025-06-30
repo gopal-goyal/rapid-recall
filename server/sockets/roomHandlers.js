@@ -7,6 +7,13 @@ const {
 const { v4: uuidv4 } = require('uuid');
 
 module.exports = function registerRoomHandlers(io, socket) {
+
+  // Check if room exists
+  socket.on('check-room-exists', ({ roomId }) => {
+  const room = getRoom(roomId);
+  socket.emit('room-exists-response', { exists: !!room });
+  });
+
   // CREATE ROOM
   socket.on('create-room', ({ name }) => {
     const roomId = uuidv4().slice(0, 6); // Generate a short room ID

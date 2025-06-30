@@ -8,9 +8,12 @@ import { Button } from '@/components/ui/Button';
 import SectionCard from '@/components/ui/SectionCard';
 import UnassignedColumn from '@/components/ui/UnassignedColumn';
 import TeamPanel from '@/components/ui/TeamPanel';
+import useCheckRoomExists from '@/hooks/useCheckRoomExists';
 
 export default function Lobby() {
   const { roomId } = useParams();
+  useCheckRoomExists(roomId);
+
   const navigate = useNavigate();
   const playerId = localStorage.getItem('playerId');
   const playerName = localStorage.getItem('playerName');
