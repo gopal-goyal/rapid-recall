@@ -1,13 +1,27 @@
 // ... existing code ...
 const cleanWords = [
+  // Himachal level
+  "baawe", "babu", "teri", "chachu", "shap", "maal", "tola", "paper", "chanchal", "khopcha", "bouncer",
+  "jangu", "ekta", "junction", "vande bharat", "rasmalai", "chai", "bhaiji", "hamari bong", "nescafe",
+  "Hillffair", "bir", "billing", "chopra", "gusto", "badka", "Lucknow Food",
+
+  // Music & Songs
+  "seedhe maut", "kr$na", "sonu nigam", "raftaar", "badshah", "Neeraj Pepsu",
+
+  // Youtube & Content Creators
+  "carryminati", "ashish chanchlani", "bb ki vines", "rebel kid", 
+  
   // General
-  "apple", "book", "cat", "river", "mountain", "phone", "tree", "car",
+  // "apple", "book", "cat", "river", "mountain", "phone", "tree", "car",
 
   // Indian Food
-  "samosa", "pani puri", "butter chicken", "biryani", "masala dosa", "roti", "paneer", "maggie",
+  // "samosa", "pani puri", "butter chicken", "biryani", "masala dosa", "roti", "paneer", "maggie",
+
+  // Movies & TV
+  "bollywood", "tollywood", "kdrama", "web series", "netflix", "amazon prime", "disney+", "hindi cinema",
 
   // Bollywood & Celebrities
-  "shah rukh khan", "alia bhatt", "karan johar", "gadar", "tiger", "item song", "dhinchak", "bigg boss",
+  "shah rukh khan", "Salman Bhai", "alia bhatt", "karan johar", "gadar", "tiger", "item song", "dhinchak", "big boss",
 
   // Slang & Memes
   "jugaad", "patakha", "chumma", "yaar", "setting", "scene", "bhaag", "cringe", "tharki", "ghanta", "faltu",
@@ -19,7 +33,7 @@ const cleanWords = [
   "hostel", "ragging", "proxy", "attendance", "fresher", "exam", "crush", "lab partner", "internship",
 
   // Festivals & Culture
-  "diwali", "holi", "eid", "navratri", "garba", "rakhi", "baraat", "mehendi", "puja", "mandir", "ladoo",
+  // "diwali", "holi", "eid", "navratri", "garba", "rakhi", "baraat", "mehendi", "puja", "mandir", "ladoo",
 
   // Political & Satirical
   "modi", "rahul gandhi", "parliament", "vote", "protest", "chowkidar", "scam", "bhakt", "aandolan",
@@ -35,7 +49,8 @@ const nsfwWords = [
   // NSFW / 18+ (toggle required to include these)
   "condom", "honeymoon", "boobs", "bra", "panty", "sex", "hookup", "strip", "vodka", "threesome", "nudes",
   "Tatte", "Third leg", "Chamanprash", "Loose motion", "Choole bhature", "Baingan", "Moti gand",
-  "Chotti luli", "Camel toe", "Periods blood", "Wet panty", "Double penetration", "Black hole"
+  "Chotti luli", "Camel toe", "Periods blood", "Wet panty", "Double penetration", "Black hole", "Fetish",
+  "Orgasm", "Kinky", "muth"
 ];
 
 function generateWords(n = 5, includeNsfw = false) {

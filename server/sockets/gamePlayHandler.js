@@ -1,5 +1,6 @@
 const { getRoom, updateRoom } = require('../state/roomStore');
 const { generateWords } = require('../utils/wordsGenerator');
+const stringSimilarity = require('string-similarity');
 
 module.exports = function registerGameplayHandlers(io, socket) {
   socket.on('game-screen-loaded', ({ roomId }) => {
@@ -32,9 +33,18 @@ module.exports = function registerGameplayHandlers(io, socket) {
     const wordList = room.gameState.currentWords;
     const normalizedGuess = guess.trim().toLowerCase();
 
-    const correct = wordList.some(w =>
-      w.word.trim().toLowerCase() === normalizedGuess && !w.guessed
-    );
+    const correct = wordList.some(w => {
+      const word = w.word.trim().toLowerCase();
+      const similarity = stringSimilarity.compareTwoStrings(word, normalizedGuess);
+      return similarity > 0.8 && !w.guessed;  // threshold can be tuned
+    });
+
+    // const wordList = room.gameState.currentWords;
+    // const normalizedGuess = guess.trim().toLowerCase();
+
+    // const correct = wordList.some(w =>
+    //   w.word.trim().toLowerCase() === normalizedGuess && !w.guessed
+    // );
 
     const player = room.players.find(p => p.socketId === socket.id);
     if (!player) return;
