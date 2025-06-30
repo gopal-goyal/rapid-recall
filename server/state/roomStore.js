@@ -28,6 +28,7 @@ function createRoom(roomId, socketId, hostPlayerId, hostName) {
     roomId,
     hostId: hostPlayerId,
     players: [{ playerId: hostPlayerId, socketId: socketId, name: hostName }],
+    disconnectedPlayers: [],
     gameState: initialGameState(),
   };
   return roomStates[roomId];
