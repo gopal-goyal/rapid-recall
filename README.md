@@ -1,61 +1,61 @@
-🎮 Rapid Recall
+# 🎮 Rapid Recall
 
 Rapid Recall is a fast-paced, multiplayer word-guessing game inspired by Team Taboo. Built with React, Socket.io, and Express, it allows real-time team-based gameplay with fun and Indian-themed word lists.
 
-✨ Features
+## ✨ Features
 
-⚡ Real-time multiplayer gameplay (Socket.io)
+- ⚡ Real-time multiplayer gameplay (Socket.io)
 
-🧠 Team-based turn system
+- 🧠 Team-based turn system
 
-🎯 Customizable game settings (words per round, time, points to win)
+- 🎯 Customizable game settings (words per round, time, points to win)
 
-🇮🇳 Indian slang, Bollywood, and cultural word packs
+- 🇮🇳 Indian slang, Bollywood, and cultural word packs
+  
+- 🔞 Optional NSFW mode for party fun
 
-🔞 Optional NSFW mode for party fun
+## 🛠️ Tech Stack
 
-🛠️ Tech Stack
+- Frontend: Vite + React
 
-Frontend: Vite + React
+- Backend: Node.js + Express
 
-Backend: Node.js + Express
+- WebSockets: Socket.io
 
-WebSockets: Socket.io
+## 📦 Folder Structure
 
-📦 Folder Structure
+- /client   → React frontend
+- /server   → Express + Socket.io backend
 
-/client   → React frontend
-/server   → Express + Socket.io backend
-
-🧑‍💻 Getting Started
+## 🧑‍💻 Getting Started
 
 1. Clone the repository
 
-git clone https://github.com/your-username/rapid-recall.git
-cd rapid-recall
+- git clone https://github.com/your-username/rapid-recall.git
+- cd rapid-recall
 
 2. Install dependencies (both client and server)
 
-npm run install
+- npm run install
 
 3. Build frontend
 
-npm run build
+- npm run build
 
 4. Start the server
 
-npm run start
+- npm run start
 
-The server will start on http://localhost:3001 and serve both backend + frontend.
+- The server will start on http://localhost:3001 and serve both backend + frontend.
 
-🌍 Deployment
+## 🌍 Deployment
 
-This project is ready to deploy on platforms like Railway, Render, or Vercel + Express combo. A package.json at the root handles both frontend and backend setup.
+- This project is ready to deploy on platforms like Railway, Render, or Vercel + Express combo. A package.json at the root handles both frontend and backend setup.
 
-🙌 Created By
+## 🙌 Created By
 
-Built by Scrapper
+- Built by Scrapper
 
-📄 License
+## 📄 License
 
-MIT – use it, fork it, play it!
+- MIT – use it, fork it, play it!
