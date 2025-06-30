@@ -6,9 +6,12 @@ import GuessInput from '@/components/ui/GuessInput';
 import GuessList from '@/components/ui/GuessList';
 import Timer from '@/components/ui/Timer';
 import SectionCard from '@/components/ui/SectionCard';
+import useCheckRoomExists from '@/hooks/useCheckRoomExists';
 
 export default function GameScreen() {
   const { roomId } = useParams();
+  useCheckRoomExists(roomId);
+
   const socket = useSocket();
   const navigate = useNavigate();
 

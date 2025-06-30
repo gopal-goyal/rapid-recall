@@ -6,9 +6,12 @@ import SectionCard from '@/components/ui/SectionCard';
 import GuessList from '@/components/ui/GuessList';
 import WordList from '../components/ui/WordList';
 import TeamPanel from '@/components/ui/TeamPanel';
+import useCheckRoomExists from '@/hooks/useCheckRoomExists';
 
 export default function Scoreboard() {
   const { roomId } = useParams();
+  useCheckRoomExists(roomId);
+
   const socket = useSocket();
   const navigate = useNavigate();
   const [scores, setScores] = useState({ A: 0, B: 0 });
