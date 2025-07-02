@@ -3,13 +3,24 @@ const cleanWords = [
   // Himachal level
   "baawe", "babu", "teri", "chachu", "shap", "maal", "tola", "paper", "chanchal", "khopcha", "bouncer",
   "jangu", "ekta", "junction", "vande bharat", "rasmalai", "chai", "bhaiji", "hamari bong", "nescafe",
-  "Hillffair", "bir", "billing", "chopra", "gusto", "badka", "Lucknow Food",
+  "Hillfair", "bir", "billing", "chopra", "gusto", "badka", "Lucknow Food",
+
+  // Miscellaneous
+  "Chamar", "Jaat", "Gurjar", "Yadav", "Brahman", "Bengali Lawyer", "Chutpaglu", "Pepsu Paglu", "Stash Pro", 
+  "Kohli Paglu", "Bongchie", "Indicator", "Nano", "Minions", "Niggro", "Einstein", "Kashmiri Chachu", "Jamalta", 
+  "Prerna", "Kanak","Aarya","Old Monk","Monkey Shoulder", "Sky Vodka", "V20","Jimmy's Cocktail","Bayblade", "Oswald", "Simpsons",
+  "Tukur Tukur", "Allah hu akbar", "Green Bullet", "Ava Adams", "Dani Daniels", "Mia Khalifa", "Leh Gotti", "Nanchaku","Namastute",
+  "Ungli", "Bedi ki Choti Lulli", "Iceburst", "Advance", "Choti Advance", "Connect","Bhosdi", "Jagdish Bhagat", "Puneet Superstar",
+  "Samay Raina","Poonam Pandey", "Oggy and Cockroach","Gadbad","Adhyan ki Bund", "De dana dan", "Vetican City", "Venice","Chutpur",
+  "Bhosdipur","Ranki ki fuddi", "Fameer Fuddi", "Bablu Ji", "Mr Hola", "Mrs Verma", "Jethalal","BOObita","Champaklal","Puba",
+  "Zudio","Zoro","Lufy","Fila","Splitsvilla","Systum","Elvish Yadav","Solo Leveling","Savita Bhabhi","Emo","Omi TV","Mausichod",
+  "Onlyfans","Bentley","Ferrari","Hyundai","Kia","Skoda Laura","Jenga",
 
   // Music & Songs
-  "seedhe maut", "kr$na", "sonu nigam", "raftaar", "badshah", "Neeraj Pepsu",
+  "seedhe maut", "kr$na", "sonu nigam", "raftaar", "badshah", "Neeraj Pepsu", "Raga", "Panther", "Sapna Choudhary",
 
   // Youtube & Content Creators
-  "carryminati", "ashish chanchlani", "bb ki vines", "rebel kid", 
+  "carryminati", "ashish chanchlani", "bb ki vines", "rebel kid", "Arpit Bala",
 
   // Movies & TV
   "bollywood", "tollywood", "kdrama", "web series", "netflix", "amazon prime", "disney+", "hindi cinema",
@@ -38,7 +49,7 @@ const cleanWords = [
 
 const nsfwWords = [
   "condom", "honeymoon", "boobs", "bra", "panty", "sex", "hookup", "strip", "vodka", "threesome", "nudes",
-  "Tatte", "Third leg", "Chamanprash", "Loose motion", "Choole bhature", "Baingan", "Moti gand",
+  "Tatte", "Third leg", "Chawanprash", "Loose motion", "Chole bhature", "Baingan", "Moti gand",
   "Chotti luli", "Camel toe", "Periods blood", "Wet panty", "Double penetration", "Black hole", "Fetish",
   "Orgasm", "Kinky", "muth"
 ];
