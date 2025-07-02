@@ -1,4 +1,4 @@
-// ... existing code ...
+// Word pools
 const cleanWords = [
   // Himachal level
   "baawe", "babu", "teri", "chachu", "shap", "maal", "tola", "paper", "chanchal", "khopcha", "bouncer",
@@ -10,12 +10,6 @@ const cleanWords = [
 
   // Youtube & Content Creators
   "carryminati", "ashish chanchlani", "bb ki vines", "rebel kid", 
-  
-  // General
-  // "apple", "book", "cat", "river", "mountain", "phone", "tree", "car",
-
-  // Indian Food
-  // "samosa", "pani puri", "butter chicken", "biryani", "masala dosa", "roti", "paneer", "maggie",
 
   // Movies & TV
   "bollywood", "tollywood", "kdrama", "web series", "netflix", "amazon prime", "disney+", "hindi cinema",
@@ -32,9 +26,6 @@ const cleanWords = [
   // College Life
   "hostel", "ragging", "proxy", "attendance", "fresher", "exam", "crush", "lab partner", "internship",
 
-  // Festivals & Culture
-  // "diwali", "holi", "eid", "navratri", "garba", "rakhi", "baraat", "mehendi", "puja", "mandir", "ladoo",
-
   // Political & Satirical
   "modi", "rahul gandhi", "parliament", "vote", "protest", "chowkidar", "scam", "bhakt", "aandolan",
 
@@ -46,21 +37,58 @@ const cleanWords = [
 ];
 
 const nsfwWords = [
-  // NSFW / 18+ (toggle required to include these)
   "condom", "honeymoon", "boobs", "bra", "panty", "sex", "hookup", "strip", "vodka", "threesome", "nudes",
   "Tatte", "Third leg", "Chamanprash", "Loose motion", "Choole bhature", "Baingan", "Moti gand",
   "Chotti luli", "Camel toe", "Periods blood", "Wet panty", "Double penetration", "Black hole", "Fetish",
   "Orgasm", "Kinky", "muth"
 ];
 
+// Persistent pools
+let cleanPool = [];
+let nsfwPool = [];
+
+function shuffleArray(arr) {
+  return arr
+    .map(value => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value);
+}
+
+function refillPool(pool, baseWords) {
+  const shuffled = shuffleArray(baseWords);
+  pool.push(...shuffled);
+}
+
+function getWordsFromPool(pool, baseWords, count) {
+  if (pool.length < count) {
+    refillPool(pool, baseWords);
+  }
+  return pool.splice(0, count);
+}
+
 function generateWords(n = 5, includeNsfw = false) {
-  let wordsPool = [...cleanWords];
-  if (includeNsfw) {
-    wordsPool = wordsPool.concat(nsfwWords);
+  // Fill clean pool if empty
+  if (cleanPool.length < n) {
+    refillPool(cleanPool, cleanWords);
   }
 
-  const shuffled = wordsPool.sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, n).map(w => ({ word: w, guessed: false }));
+  let selectedWords = getWordsFromPool(cleanPool, cleanWords, n);
+
+  if (includeNsfw) {
+    // Fill nsfw pool if empty
+    if (nsfwPool.length < n) {
+      refillPool(nsfwPool, nsfwWords);
+    }
+
+    // Half from clean, half from nsfw (or tweak logic as needed)
+    const half = Math.floor(n / 2);
+    const cleanCount = n - half;
+    selectedWords = getWordsFromPool(cleanPool, cleanWords, cleanCount).concat(
+      getWordsFromPool(nsfwPool, nsfwWords, half)
+    );
+  }
+
+  return selectedWords.map(w => ({ word: w, guessed: false }));
 }
 
 module.exports = { generateWords };
