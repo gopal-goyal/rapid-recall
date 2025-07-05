@@ -11,6 +11,7 @@ function initialGameState() {
     },
     teams: { A: [], B: [] },
     scores: { A: 0, B: 0 },
+    usedWords: [],
     turnOrder: [],                  // Array of player objects: [{ id, name }, ...]
     currentTurnIndex: 0,           // Index in turnOrder array
     currentPhase: 'lobby',         // 'lobby' | 'score' | 'gameplay' | 'end'
