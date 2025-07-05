@@ -94,7 +94,7 @@ function generateWords(room, n = 5, includeNsfw = false) {
         room.usedWords = [];
     }
 
-    const usedWords = room.usedWords;
+    let usedWords = room.usedWords;
     let selectedWords = [];
 
     if (includeNsfw) {
@@ -108,6 +108,8 @@ function generateWords(room, n = 5, includeNsfw = false) {
     } else {
         selectedWords = getWordsFromPool(cleanPool, cleanWords, usedWords, n);
     }
+    console.log(selectedWords);
+    console.log(usedWords)
 
     return selectedWords.map(word => ({ word, guessed: false }));
 }

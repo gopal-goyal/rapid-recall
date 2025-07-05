@@ -97,6 +97,8 @@ module.exports = function registerGameplayHandlers(io, socket) {
       room.gameState.timeLeft = timePerTurn;
     });
 
+    console.log(room);
+
     io.to(roomId).emit('navigate-to-game');
 
     io.to(roomId).emit('game-state', {
