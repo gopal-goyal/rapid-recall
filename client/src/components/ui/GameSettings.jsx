@@ -17,7 +17,8 @@ export default function GameSettings({ isHost, settings, onUpdate }) {
             <span className="text-gray-500 mb-1">Words / Round</span>
             <input
               type="number"
-              min={1}
+              min={3}
+              max={8}
               value={settings.wordsPerRound}
               disabled={!isHost}
               onChange={(e) => handleChange('wordsPerRound', parseInt(e.target.value))}
@@ -30,7 +31,8 @@ export default function GameSettings({ isHost, settings, onUpdate }) {
             <span className="text-gray-500 mb-1">Time / Turn (s)</span>
             <input
               type="number"
-              min={10}
+              min={20}
+              max={60}
               value={settings.timePerTurn}
               disabled={!isHost}
               onChange={(e) => handleChange('timePerTurn', parseInt(e.target.value))}
@@ -43,7 +45,8 @@ export default function GameSettings({ isHost, settings, onUpdate }) {
             <span className="text-gray-500 mb-1">Points to Win</span>
             <input
               type="number"
-              min={1}
+              min={10}
+              max={50}
               value={settings.pointsToWin}
               disabled={!isHost}
               onChange={(e) => handleChange('pointsToWin', parseInt(e.target.value))}

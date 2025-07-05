@@ -5,12 +5,13 @@ function initialGameState() {
   return {
     settings: {
       wordsPerRound: 5,
-      timePerTurn: 60,
-      pointsToWin: 10,
+      timePerTurn: 30,
+      pointsToWin: 25,
       includeNsfw: false,
     },
     teams: { A: [], B: [] },
     scores: { A: 0, B: 0 },
+    usedWords: [],
     turnOrder: [],                  // Array of player objects: [{ id, name }, ...]
     currentTurnIndex: 0,           // Index in turnOrder array
     currentPhase: 'lobby',         // 'lobby' | 'score' | 'gameplay' | 'end'
