@@ -113,3 +113,7 @@ function generateWords(room, n = 5, includeNsfw = false) {
 
     return selectedWords.map(word => ({ word, guessed: false }));
 }
+
+module.exports = {
+    generateWords,
+}

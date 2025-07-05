@@ -1,5 +1,6 @@
 const {getRoom, updateRoom} = require('../state/roomStore');
 const stringSimilarity = require('string-similarity');
+const { generateWords } = require('../utils/wordsGenerator');
 
 module.exports = function registerGameplayHandlers(io, socket) {
     socket.on('game-screen-loaded', ({roomId}) => {
