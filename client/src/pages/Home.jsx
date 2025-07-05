@@ -57,19 +57,20 @@ export default function Home() {
   return (
     <SectionCard>
       <div className="space-y-6 max-w-md mx-auto w-full">
+        {/* Name Input */}
         <div>
           <label htmlFor="name" className="text-sm font-medium text-gray-700 mb-1 block">
             Your Name
           </label>
-            <input
-                autoFocus={true}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your name"
-            />
+          <input
+            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Enter your name"
+          />
         </div>
 
+        {/* Create Room Section */}
         <div>
           <Button onClick={handleCreate} disabled={!name} className="w-full">
             Create New Room

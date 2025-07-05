@@ -91,7 +91,7 @@ module.exports = function registerGameplayHandlers(io, socket) {
     const timePerTurn = room.gameState.settings.timePerTurn;
 
     updateRoom(roomId, room => {
-      room.gameState.currentWords = generateWords(room, room.gameState.settings.wordsPerRound, room.gameState.settings.includeNsfw);
+      room.gameState.currentWords = generateWords(room.gameState.settings.wordsPerRound, room.gameState.settings.includeNsfw);
       room.gameState.turnEnded = false;
       room.gameState.guesses = [];
       room.gameState.timeLeft = timePerTurn;

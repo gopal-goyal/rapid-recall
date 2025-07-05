@@ -26,8 +26,8 @@ export default function Lobby() {
   const [teamB, setTeamB] = useState([]);
   const [gameSettings, setGameSettings] = useState({
     wordsPerRound: 5,
-    timePerTurn: 30,
-    pointsToWin: 25,
+    timePerTurn: 60,
+    pointsToWin: 10,
   });
 
   useEffect(() => {
@@ -108,13 +108,11 @@ export default function Lobby() {
               isDroppable={true}
               isHost={isHost}
               onDrop={(p) => {
-                  if (!teamA.some(player => player.playerId === p.playerId)) {
-                      const newTeamA = [...teamA, p];
-                      setTeamA(newTeamA);
-                      const newTeamB = teamB.filter((b) => b.playerId !== p.playerId);
-                      setTeamB(newTeamB);
-                      emitTeamUpdate(newTeamA, newTeamB);
-                  }
+                const newTeamA = [...teamA, p];
+                const newTeamB = teamB.filter((b) => b.playerId !== p.playerId);
+                setTeamA(newTeamA);
+                setTeamB(newTeamB);
+                emitTeamUpdate(newTeamA, newTeamB);
               }}
             />
             <TeamPanel
@@ -123,13 +121,11 @@ export default function Lobby() {
               isDroppable={true}
               isHost={isHost}
               onDrop={(p) => {
-                  if (!teamB.some(player => player.playerId === p.playerId)) {
-                      const newTeamB = [...teamB, p];
-                      const newTeamA = teamA.filter((a) => a.playerId !== p.playerId);
-                      setTeamA(newTeamA);
-                      setTeamB(newTeamB);
-                      emitTeamUpdate(newTeamA, newTeamB);
-                  }
+                const newTeamB = [...teamB, p];
+                const newTeamA = teamA.filter((a) => a.playerId !== p.playerId);
+                setTeamA(newTeamA);
+                setTeamB(newTeamB);
+                emitTeamUpdate(newTeamA, newTeamB);
               }}
             />
           </div>
