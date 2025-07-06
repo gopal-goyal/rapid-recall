@@ -104,12 +104,14 @@ export default function Lobby() {
                 {/* 🎲 Random Distribution Button */}
                 {isHost && (
                     <div className="flex justify-center mb-4">
-                        <Button variant="secondary" onClick={randomlyDistributePlayers}>
+                        <button
+                            onClick={randomlyDistributePlayers}
+                            className="px-6 py-2 rounded-2xl shadow-md bg-blue-600 text-white font-semibold text-base hover:bg-blue-700 active:scale-95 transition-all"
+                        >
                             Randomly Distribute Players
-                        </Button>
+                        </button>
                     </div>
                 )}
-
                 <UnassignedColumn
                     players={unassigned}
                     onDrop={(player) => {
