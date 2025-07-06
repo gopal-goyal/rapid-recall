@@ -30,6 +30,7 @@ export default function GameScreen() {
     socket.emit('game-screen-loaded', { roomId });
 
     socket.on('game-state', ({ words, guesses, currentPlayer, teams, timeLeft }) => {
+      console.log(words, guesses, currentPlayer, teams, timeLeft);
       setWords(words);
       setGuesses(guesses);
       setCurrentPlayer(currentPlayer);

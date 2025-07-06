@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import {  useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSocket } from '../context/SocketContext';
-import { useDrop, DndProvider } from 'react-dnd';
+import {  DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import GameSettings from '@/components/ui/GameSettings';
 import { Button } from '@/components/ui/Button';
@@ -26,8 +26,8 @@ export default function Lobby() {
   const [teamB, setTeamB] = useState([]);
   const [gameSettings, setGameSettings] = useState({
     wordsPerRound: 5,
-    timePerTurn: 60,
-    pointsToWin: 10,
+    timePerTurn: 30,
+    pointsToWin: 20,
   });
 
   useEffect(() => {
@@ -108,11 +108,13 @@ export default function Lobby() {
               isDroppable={true}
               isHost={isHost}
               onDrop={(p) => {
-                const newTeamA = [...teamA, p];
-                const newTeamB = teamB.filter((b) => b.playerId !== p.playerId);
-                setTeamA(newTeamA);
-                setTeamB(newTeamB);
-                emitTeamUpdate(newTeamA, newTeamB);
+                  if (!teamA.some(player => player.playerId === p.playerId)) {
+                      const newTeamA = [...teamA, p];
+                      setTeamA(newTeamA);
+                      const newTeamB = teamB.filter((b) => b.playerId !== p.playerId);
+                      setTeamB(newTeamB);
+                      emitTeamUpdate(newTeamA, newTeamB);
+                  }
               }}
             />
             <TeamPanel
@@ -121,11 +123,13 @@ export default function Lobby() {
               isDroppable={true}
               isHost={isHost}
               onDrop={(p) => {
-                const newTeamB = [...teamB, p];
-                const newTeamA = teamA.filter((a) => a.playerId !== p.playerId);
-                setTeamA(newTeamA);
-                setTeamB(newTeamB);
-                emitTeamUpdate(newTeamA, newTeamB);
+                  if (!teamB.some(player => player.playerId === p.playerId)) {
+                      const newTeamB = [...teamB, p];
+                      const newTeamA = teamA.filter((a) => a.playerId !== p.playerId);
+                      setTeamA(newTeamA);
+                      setTeamB(newTeamB);
+                      emitTeamUpdate(newTeamA, newTeamB);
+                  }
               }}
             />
           </div>
